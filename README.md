@@ -1,7 +1,7 @@
 # tsne-grid
 This is a python script for [t-SNE](https://lvdmaaten.github.io/tsne/) visualization of multiple images in a square grid.
 <p align="center">
-<img src="./examples/tsne_rand.jpg" width="290" height="290" />
+<img src="./tsne_grid_smaller.jpg" width="290" height="290" />
 </p>
 
 ### Setup
