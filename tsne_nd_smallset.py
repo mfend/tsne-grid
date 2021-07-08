@@ -16,6 +16,7 @@ from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.python.keras.models import Model, Sequential
 from tensorflow.python.keras.layers import Flatten
 
+# Add command line arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--size', type=int, help="number of small images in a row/column in output image")
 parser.add_argument('-d', '--dir', type=str, help="source directory for images")
@@ -26,6 +27,7 @@ parser.add_argument('-x', '--per', type=int, default=50, help="tsne perplexity")
 parser.add_argument('-i', '--iter', type=int, default=5000, help="number of iterations in tsne algorithm")
 parser.add_argument('-z', '--numd', type=int, default=2, help="number of tsne dimensions")
 
+# assign command line arguments to variable names
 args = parser.parse_args()
 out_res = args.res
 out_name = args.name
@@ -35,25 +37,30 @@ perplexity = args.per
 tsne_iter = args.iter
 n = args.numd
 
+# Raise error for only one image
 if out_dim == 1:
     raise ValueError("Output grid dimension 1x1 not supported.")
 
+# Assign image directory path/name to variable, raise error if the directory doesn't exist 
 if os.path.exists(args.dir):
     in_dir = args.dir
 else:
     raise argparse.ArgumentTypeError("'{}' not a valid directory.".format(in_dir))
 
+# Assign output directory path/name to variable, raise error if the directory doesn't exist 
 if os.path.exists(args.path):
     out_dir = args.path
 else:
     raise argparse.ArgumentTypeError("'{}' not a valid directory.".format(out_dir))
 
+# define function for VGG16 sequential model, using imagenet weights
 def build_model():
     base_model = VGG16(weights='imagenet')
     top_model = Sequential()
     top_model.add(Flatten(input_shape=base_model.output_shape[1:]))
     return Model(inputs=base_model.input, outputs=top_model(base_model.output))
 
+# define function for loading all images in directory and 
 def load_img(in_dir):
     pred_img = [f for f in os.listdir(in_dir) if os.path.isfile(os.path.join(in_dir, f))]
     img_collection = []
