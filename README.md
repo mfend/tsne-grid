@@ -26,6 +26,8 @@ python -i tsne_nd_smallset.py --dir <path/to/example-directory/> --size 3
 #### Outputs
 * Will create a Python pickle (.pkl) file containing the cluster data
 * If run interactively (as suggested above), will display a plot of clusters.
+* Will print to the command line the file names of the images in each cluster.
+* N.B. It was impractical to supply the full image set used in this study, but an attempt was made to provide a somewhat representative subset as much as was possible.
 
 ### Implementation details
 VGG16 (without fc layers on top) is used to generate high dimensional feature representations of images. 2D representaions of these features are formed using scikit-learn's t-SNE implementation. These 2D representations are converted into a square grid using [Jonker-Volgenant](https://blog.sourced.tech/post/lapjv/) algorithm.
