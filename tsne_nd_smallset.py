@@ -60,7 +60,7 @@ def build_model():
     top_model.add(Flatten(input_shape=base_model.output_shape[1:]))
     return Model(inputs=base_model.input, outputs=top_model(base_model.output))
 
-# define function for loading all images in directory and 
+# define function for loading all images in directory and returning them as a collection
 def load_img(in_dir):
     pred_img = [f for f in os.listdir(in_dir) if os.path.isfile(os.path.join(in_dir, f))]
     img_collection = []
@@ -74,6 +74,7 @@ def load_img(in_dir):
         raise ValueError("Cannot fit {} images in {}x{} grid".format(len(img_collection), out_dim, out_dim))
     return img_collection
 
+# define function for getting activations for each image in collection
 def get_activations(model, img_collection):
     activations = []
     for idx, img in enumerate(img_collection):
@@ -87,6 +88,7 @@ def get_activations(model, img_collection):
         activations.append(np.squeeze(model.predict(x)))
     return activations
 
+# define function for creating t-SNE model based on activations
 def generate_tsne(activations,n):
     tsne = TSNE(perplexity=perplexity, n_components=n, init='random', n_iter=tsne_iter,learning_rate=10)
     #X_nd = tsne.fit_transform(np.array(activations)[0:to_plot,:])
@@ -96,6 +98,7 @@ def generate_tsne(activations,n):
     X_nd /= X_nd.max(axis=0)
     return X_nd
  
+# define main function
 def main():
     model = build_model()
     img_collection = load_img(in_dir)
@@ -105,28 +108,33 @@ def main():
 
     return X_nd
     
-
+# Run the main program, dump and safe output in pickles
 if __name__ == '__main__':
     dats = main()
     fili = open('tsne_example_p'+str(perplexity)+'i'+str(tsne_iter)+'.pkl','wb')
     pickle.dump(dats,fili)
     fili.close()
 
+# Fit k-means to output data, using 3 clusters
 kinfo = KMeans(n_clusters=3,random_state=0).fit(dats)
 
+# Assign cluster info and data labels to variable names
 clusts = kinfo.cluster_centers_
 labels = kinfo.labels_
 
+# find indices of members of each cluster
 cluster0 = np.nonzero(labels==0)[0]
-cluster1 = np.nonzero(labels==1)[0]
+cluster1 = np.nonzero(labels==1)[0] 
 cluster2 = np.nonzero(labels==2)[0]
 
+# make an iteratable list of cluster indices
 cluster_sets = [cluster0,cluster1,cluster2]
 
 i = 1
 
 print('\n'+'='*10+'    Final Clusters    '+'='*10+'\n')
 
+# print the file names of the images in each cluster
 for inds in cluster_sets:
 
     images = np.array(os.listdir(in_dir))[inds]
@@ -139,7 +147,7 @@ for inds in cluster_sets:
 
     i+=1
     
+# plot up the clusters
 pl.scatter(dats[:,0],dats[:,1],c=labels)
-
 pl.ion()
 pl.show()
