@@ -17,7 +17,7 @@ python tsne_nd_smallset.py --dir <path/to/example-directory/> --size 3
 ```
 #### Options (required)
 * `--dir`: Path to directory containing image collection.
-* `--size`: should be set to 3
+* `--size`: should be set to 3 for the example images supplied in this repository.
 
 #### Options (optional)
 * `--per`: Perplexity for t-SNE algorithm. Default is 50.
